@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from .models import Product, ProductImage
-
+from django.db import models
 
 class ProductImageSerializer(serializers.ModelSerializer):
     class Meta:
@@ -9,6 +9,7 @@ class ProductImageSerializer(serializers.ModelSerializer):
 
 class ProductListSerializer(serializers.ListSerializer):
     def to_representation(self, data):
+        iterable = data.all() if isinstance(data, models.Manager) else data
         return [
             {
             'title': item.title,
@@ -16,7 +17,7 @@ class ProductListSerializer(serializers.ListSerializer):
             'user': item.user.username,
             'price': item.price,
             'main_image': item.main_image.url
-            } for item in data.all()
+            } for item in iterable
         ]
 
 
